@@ -44,6 +44,7 @@ String SDDataString = "";
 #define PKT_TYPE_CMD_COLLECT_INTERVAL 0xA0
 #define PKT_TYPE_CMD_BEEP_ON 0xA1
 #define PKT_TYPE_CMD_SHUTDOWN 0xA3
+#define PKT_TYPE_CMD_ALTITUDE 0xA0
 
 
 
@@ -262,6 +263,29 @@ void sensor_scd4x_init(void) {
   // scd4x.powerDown();
 }
 
+void sensor_scd4x_set_altitude(uint16_t altitude) {
+  uint16_t error;
+  char errorMessage[256];
+
+  // stop potentially previously started measurement
+  error = scd4x.stopPeriodicMeasurement();
+  if (error) {
+    Serial.print("Error trying to execute stopPeriodicMeasurement(): ");
+    errorToString(error, errorMessage, 256);
+    Serial.println(errorMessage);
+  }
+
+  scd4x.setSensorAltitude(altitude);
+
+  // Restart Measurement
+  error = scd4x.startPeriodicMeasurement();
+  if (error) {
+    Serial.print("Error trying to execute startPeriodicMeasurement(): ");
+    errorToString(error, errorMessage, 256);
+    Serial.println(errorMessage);
+  }
+}
+
 void sensor_scd4x_get(void) {
   uint16_t error;
   char errorMessage[256];
@@ -299,7 +323,6 @@ void sensor_scd4x_get(void) {
     SDDataString += ',';
     SDDataString += String(humidity);
     SDDataString += ',';
-
 
     sensor_data_send(PKT_TYPE_SENSOR_SCD41_CO2, (float)co2);  //todo
     sensor_data_send(PKT_TYPE_SENSOR_SCD41_TEMP, (float)temperature);
@@ -363,12 +386,19 @@ void onPacketReceived(const uint8_t *buffer, size_t size) {
         sensor_power_off();
         break;
       }
+    case PKT_TYPE_CMD_ALTITUDE:
+      {
+        uint16_t altitude;
+        memcpy(&altitude, &buffer[1], sizeof(uint16_t));
+        Serial.println("Update SCD41 sensor altitude to " + altitude);
+        sensor_scd4x_set_altitude(altitude);
+      }
     default:
       break;
   }
 }
 
-/************************ setuo & loop ****************************/
+/************************ setup & loop ****************************/
 
 int cnt = 0;
 int i = 0;
