@@ -39,6 +39,8 @@ String SDDataString = "";
 #define PKT_TYPE_SENSOR_SHT41_TEMP 0XB3
 #define PKT_TYPE_SENSOR_SHT41_HUMIDITY 0XB4
 #define PKT_TYPE_SENSOR_TVOC_INDEX 0XB5
+#define PKT_TYPE_SENSOR_SCD41_TEMP 0XB6
+#define PKT_TYPE_SENSOR_SCD41_HUMIDITY 0XB7
 #define PKT_TYPE_CMD_COLLECT_INTERVAL 0xA0
 #define PKT_TYPE_CMD_BEEP_ON 0xA1
 #define PKT_TYPE_CMD_SHUTDOWN 0xA3
@@ -300,6 +302,8 @@ void sensor_scd4x_get(void) {
 
 
     sensor_data_send(PKT_TYPE_SENSOR_SCD41_CO2, (float)co2);  //todo
+    sensor_data_send(PKT_TYPE_SENSOR_SCD41_TEMP, (float)temperature);
+    sensor_data_send(PKT_TYPE_SENSOR_SCD41_HUMIDITY, (float)temperature);
   }
 }
 
