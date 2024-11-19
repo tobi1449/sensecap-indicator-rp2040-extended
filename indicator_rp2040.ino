@@ -397,7 +397,6 @@ void onPacketReceived(const uint8_t *buffer, size_t size) {
   case PKT_TYPE_CMD_ALTITUDE: {
     uint16_t altitude;
     memcpy(&altitude, &buffer[1], sizeof(uint16_t));
-    Serial.println("Update SCD41 sensor altitude to " + altitude);
     sensor_scd4x_set_altitude(altitude);
   }
   default:
