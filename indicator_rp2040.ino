@@ -79,7 +79,7 @@ void printUint16Hex(uint16_t value) {
 }
 
 void printSerialNumber(uint16_t serial0, uint16_t serial1, uint16_t serial2) {
-  Serial.print("Serial: 0x");
+  Serial.print("SCD41 Serial: 0x");
   printUint16Hex(serial0);
   printUint16Hex(serial1);
   printUint16Hex(serial2);
@@ -109,6 +109,7 @@ uint16_t compensationT = defaultCompenstaionT;
 /************************ aht  temp & humidity ****************************/
 
 void sensor_aht_init(void) {
+  Serial.println("Initializing AHT20");
   AHT.begin();
 }
 
@@ -154,6 +155,8 @@ void sensor_sgp40_init(void) {
   uint16_t error;
   char errorMessage[256];
 
+  Serial.println("Initializing SGP40");
+
   sgp40.begin(Wire);
 
   uint16_t serialNumber[3];
@@ -166,7 +169,7 @@ void sensor_sgp40_init(void) {
     errorToString(error, errorMessage, 256);
     Serial.println(errorMessage);
   } else {
-    Serial.print("SerialNumber:");
+    Serial.print("SGP40 Serial:");
     Serial.print("0x");
     for (size_t i = 0; i < serialNumberSize; i++) {
       uint16_t value = serialNumber[i];
@@ -231,6 +234,8 @@ void sensor_scd4x_init(void) {
   uint16_t error;
   char errorMessage[256];
 
+  Serial.println("Initializing SCD41");
+
   scd4x.begin(Wire);
 
   // stop potentially previously started measurement
@@ -266,6 +271,10 @@ void sensor_scd4x_init(void) {
 void sensor_scd4x_set_altitude(uint16_t altitude) {
   uint16_t error;
   char errorMessage[256];
+
+  Serial.print("Setting altitude compensation for SCD41 to ");
+  Serial.print(altitude);
+  Serial.println();
 
   // stop potentially previously started measurement
   error = scd4x.stopPeriodicMeasurement();
