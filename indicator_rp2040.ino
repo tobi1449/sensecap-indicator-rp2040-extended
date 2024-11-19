@@ -50,7 +50,7 @@ String SDDataString = "";
 
 // sensor data send to  esp32
 void sensor_data_send(uint8_t type, float data) {
-  uint8_t data_buf[32] = { 0 };
+  uint8_t data_buf[32] = {0};
   int index = 0;
 
   data_buf[0] = type;
@@ -118,7 +118,7 @@ void sensor_aht_get(void) {
   float humi, temp;
 
   int ret = AHT.getSensor(&humi, &temp);
-  if (ret)  // GET DATA OK
+  if (ret) // GET DATA OK
   {
     Serial.print("humidity: ");
     Serial.print(humi * 100);
@@ -128,7 +128,7 @@ void sensor_aht_get(void) {
     humidity = humi * 100;
     compensationT = static_cast<uint16_t>((temperature + 45) * 65535 / 175);
     compensationRh = static_cast<uint16_t>(humidity * 65535 / 100);
-  } else  // GET DATA FAIL
+  } else // GET DATA FAIL
   {
     Serial.println("GET DATA FROM AHT20 FAIL");
     compensationRh = defaultCompenstaionRh;
@@ -333,7 +333,7 @@ void sensor_scd4x_get(void) {
     SDDataString += String(humidity);
     SDDataString += ',';
 
-    sensor_data_send(PKT_TYPE_SENSOR_SCD41_CO2, (float)co2);  //todo
+    sensor_data_send(PKT_TYPE_SENSOR_SCD41_CO2, (float)co2); //todo
     sensor_data_send(PKT_TYPE_SENSOR_SCD41_TEMP, (float)temperature);
     sensor_data_send(PKT_TYPE_SENSOR_SCD41_HUMIDITY, (float)temperature);
   }
@@ -341,7 +341,7 @@ void sensor_scd4x_get(void) {
 
 /************************ beep ****************************/
 
-#define Buzzer 19  //Buzzer GPIO
+#define Buzzer 19 //Buzzer GPIO
 
 void beep_init(void) {
   pinMode(Buzzer, OUTPUT);
@@ -388,22 +388,20 @@ void onPacketReceived(const uint8_t *buffer, size_t size) {
     return;
   }
   switch (buffer[0]) {
-    case PKT_TYPE_CMD_SHUTDOWN:
-      {
-        Serial.println("cmd shutdown");
-        shutdown_flag = true;
-        sensor_power_off();
-        break;
-      }
-    case PKT_TYPE_CMD_ALTITUDE:
-      {
-        uint16_t altitude;
-        memcpy(&altitude, &buffer[1], sizeof(uint16_t));
-        Serial.println("Update SCD41 sensor altitude to " + altitude);
-        sensor_scd4x_set_altitude(altitude);
-      }
-    default:
-      break;
+  case PKT_TYPE_CMD_SHUTDOWN: {
+    Serial.println("cmd shutdown");
+    shutdown_flag = true;
+    sensor_power_off();
+    break;
+  }
+  case PKT_TYPE_CMD_ALTITUDE: {
+    uint16_t altitude;
+    memcpy(&altitude, &buffer[1], sizeof(uint16_t));
+    Serial.println("Update SCD41 sensor altitude to " + altitude);
+    sensor_scd4x_set_altitude(altitude);
+  }
+  default:
+    break;
   }
 }
 
@@ -451,8 +449,8 @@ void setup() {
   int32_t std_initial;
   int32_t gain_factor;
   voc_algorithm.get_tuning_parameters(
-    index_offset, learning_time_offset_hours, learning_time_gain_hours,
-    gating_max_duration_minutes, std_initial, gain_factor);
+      index_offset, learning_time_offset_hours, learning_time_gain_hours,
+      gating_max_duration_minutes, std_initial, gain_factor);
 
   Serial.println("\nVOC Gas Index Algorithm parameters");
   Serial.print("Index offset:\t");
