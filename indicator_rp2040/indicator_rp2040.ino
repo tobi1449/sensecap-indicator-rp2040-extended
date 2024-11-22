@@ -373,8 +373,6 @@ void grove_adc_get(void) {
 
 /************************ recv cmd from esp32  ****************************/
 
-static bool shutdown_flag = false;
-
 void onPacketReceived(const uint8_t *buffer, size_t size) {
 
 #if DEBUG
@@ -390,7 +388,6 @@ void onPacketReceived(const uint8_t *buffer, size_t size) {
   switch (buffer[0]) {
   case PKT_TYPE_CMD_SHUTDOWN: {
     Serial.println("cmd shutdown");
-    shutdown_flag = true;
     sensor_power_off();
     break;
   }
@@ -510,8 +507,4 @@ void loop() {
   if (myPacketSerial.overflow()) {
   }
   delay(10);
-
-  // while( shutdown_flag) {
-  //    delay(10);
-  // }
 }
